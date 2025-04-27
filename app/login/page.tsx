@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
-import { login } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { sendMagicLink } from "./actions";
 
 export default function Page() {
   return (
@@ -12,7 +12,7 @@ export default function Page() {
           <Input id="email" name="email" type="email" required />
         </div>
 
-        <Button formAction={login}>Log in</Button>
+        <Button formAction={sendMagicLink}>Log in</Button>
       </form>
     </div>
   );
