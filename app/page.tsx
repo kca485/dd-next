@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { GoogleMap } from "./google-map";
 import { cookies, headers } from "next/headers";
 
+export const runtime = "nodejs";
+
 export default async function Home() {
   const cookieStore = await cookies();
   const sbAuth = cookieStore.get("sb-auth");
@@ -16,7 +18,7 @@ export default async function Home() {
   }
 
   const authRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/session`,
     {
       headers: {
         Accept: "application/json",

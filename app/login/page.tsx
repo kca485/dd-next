@@ -2,10 +2,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sendMagicLink } from "./actions";
-import { headers } from "next/headers";
 
 export default async function Page() {
-  const cookieHeader = (await headers()).get("cookie") ?? "";
   return (
     <div>
       <div className="h-screen flex justify-center items-center">
@@ -18,7 +16,6 @@ export default async function Page() {
           <Button formAction={sendMagicLink}>Log in</Button>
         </form>
       </div>
-      <p>observer: {cookieHeader}</p>
     </div>
   );
 }
