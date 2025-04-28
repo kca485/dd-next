@@ -64,6 +64,7 @@ export default async function Home() {
   return (
     <>
       <GoogleMap places={pois} />
+      <p>observer: {cookieHeader}</p>
     </>
   );
 }
