@@ -1,17 +1,10 @@
 import { redirect } from "next/navigation";
 import { GoogleMap } from "./google-map";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
 export const runtime = "nodejs";
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const sbAuth = cookieStore.get("sb-auth");
-  console.log("sb auth", sbAuth);
-  if (!sbAuth) {
-    console.error("no auth info found");
-  }
-
   const cookieHeader = (await headers()).get("cookie") ?? "";
   if (!cookieHeader) {
     console.error("no cookie found");
@@ -27,7 +20,6 @@ export default async function Home() {
       cache: "no-store",
     },
   );
-  console.log("session response", authRes);
 
   if (!authRes.ok) {
     console.error("Session response is not ok");

@@ -95,22 +95,11 @@ export function GoogleMap({ places }: { places: Poi[] }) {
     <div className="flex">
       <div className="h-screen flex-grow">
         <TooltipProvider>
-          <APIProvider
-            apiKey="AIzaSyCznevvPmQwRnUjam5bcXrwZWHNsHOV4iY"
-            onLoad={() => console.log("Maps API has loaded.")}
-          >
+          <APIProvider apiKey="AIzaSyCznevvPmQwRnUjam5bcXrwZWHNsHOV4iY">
             <Map
               defaultZoom={13}
               defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
               mapId="43ca1adc30ca2b5a"
-              onCameraChanged={(e: MapCameraChangedEvent) =>
-                console.log(
-                  "camera changed:",
-                  e.detail.center,
-                  "zoom:",
-                  e.detail.zoom,
-                )
-              }
               onClick={handlePlaceMarker}
             >
               <PoiMarkers onSelect={handleSelectMarker} pois={pois} />
@@ -176,6 +165,10 @@ function PlaceForm({
           defaultValue={existingPrice}
           required
         />
+      </div>
+      <div>
+        <Label htmlFor="image">Picture:</Label>
+        <Input id="image" type="file" />
       </div>
       <Button>Submit</Button>
     </form>
