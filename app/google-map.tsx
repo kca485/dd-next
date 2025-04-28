@@ -6,6 +6,7 @@ import {
   Map,
   MapCameraChangedEvent,
   MapMouseEvent,
+  Pin,
   useMap,
 } from "@vis.gl/react-google-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -28,56 +29,9 @@ interface Poi {
   location: google.maps.LatLngLiteral;
   price: number;
 }
-const dummies: Poi[] = [
-  {
-    id: 1,
-    location: { lat: -33.8567844, lng: 151.213108 },
-    price: 1000,
-  },
-  {
-    id: 2,
-    location: { lat: -33.8472767, lng: 151.2188164 },
-    price: 1000,
-  },
-  {
-    id: 3,
-    location: { lat: -33.8209738, lng: 151.2563253 },
-    price: 1000,
-  },
-  {
-    id: 4,
-    location: { lat: -33.8690081, lng: 151.2052393 },
-    price: 1000,
-  },
-  {
-    id: 5,
-    location: { lat: -33.8587568, lng: 151.2058246 },
-    price: 1000,
-  },
-  {
-    id: 6,
-    location: { lat: -33.858761, lng: 151.2055688 },
-    price: 1000,
-  },
-  {
-    id: 7,
-    location: { lat: -33.852228, lng: 151.2038374 },
-    price: 1000,
-  },
-  {
-    id: 8,
-    location: { lat: -33.8737375, lng: 151.222569 },
-    price: 1000,
-  },
-  {
-    id: 9,
-    location: { lat: -33.864167, lng: 151.216387 },
-    price: 1000,
-  },
-];
 
 export function GoogleMap({ places }: { places: Poi[] }) {
-  const pois = places?.length ? places : dummies;
+  const pois = places;
   const [selectedMarker, setSelectedMarker] =
     useState<google.maps.LatLngLiteral | null>(null);
   const [newPosition, setNewPosition] =
@@ -85,10 +39,13 @@ export function GoogleMap({ places }: { places: Poi[] }) {
 
   const latLng = selectedMarker ?? newPosition;
 
-  function handleSelectMarker(latLng: google.maps.LatLngLiteral) {
-    setNewPosition(null);
-    setSelectedMarker(latLng);
-  }
+  const handleSelectMarker = useCallback(
+    (latLng: google.maps.LatLngLiteral) => {
+      setNewPosition(null);
+      setSelectedMarker(latLng);
+    },
+    [],
+  );
 
   function handlePlaceMarker(e: MapMouseEvent) {
     setSelectedMarker(null);
@@ -96,7 +53,7 @@ export function GoogleMap({ places }: { places: Poi[] }) {
   }
 
   function handleForm(formData: FormData) {
-    const price = Math.floor(parseFloat(formData.get("price") as string) * 100);
+    const price = Math.floor(parseFloat(formData.get("price") as string));
     const place = {
       lat: parseFloat(formData.get("lat") as string),
       lng: parseFloat(formData.get("lng") as string),
@@ -112,8 +69,10 @@ export function GoogleMap({ places }: { places: Poi[] }) {
         return console.error("No id to update");
       }
       editPlace(place, selectedPoi.id);
+      setSelectedMarker(null);
     } else {
       addPlace(place);
+      setNewPosition(null);
     }
   }
 
@@ -155,12 +114,21 @@ export function GoogleMap({ places }: { places: Poi[] }) {
               onClick={handlePlaceMarker}
             >
               <PoiMarkers onSelect={handleSelectMarker} pois={pois} />
+              {newPosition && (
+                <AdvancedMarker position={newPosition}>
+                  <Pin
+                    background="#FBBC04"
+                    glyphColor="#000"
+                    borderColor="#000"
+                  />
+                </AdvancedMarker>
+              )}
             </Map>
           </APIProvider>
         </TooltipProvider>
       </div>
       <div className="w-xs p-4 flex flex-col">
-        <h1>Data</h1>
+        <h1 className="font-bold text-lg pb-4">Data</h1>
         {latLng && (
           <PlaceForm latLng={latLng} onSubmit={handleForm} pois={pois} />
         )}
@@ -280,9 +248,18 @@ function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
           />
         </TooltipContent>
         <TooltipTrigger>
-          <span className="bg-white p-2 rounded-full border">{poi.price}</span>
+          <span className="bg-white p-2 rounded-full border border-2 border-black">
+            {formatPrice(poi.price)}
+          </span>
         </TooltipTrigger>
       </Tooltip>
     </AdvancedMarker>
   ));
+}
+
+function formatPrice(number: number) {
+  return new Intl.NumberFormat("id-ID", {
+    currency: "IDR",
+    style: "currency",
+  }).format(number);
 }

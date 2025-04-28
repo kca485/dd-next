@@ -1,15 +1,10 @@
 import { redirect } from "next/navigation";
 import { GoogleMap } from "./google-map";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const sbAuth = cookieStore.get("sb-auth");
-  console.log("sb auth", sbAuth);
-
   const cookieHeader = (await headers()).get("cookie") ?? "";
 
-  // Get user
   const authRes = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
     {
@@ -42,7 +37,6 @@ export default async function Home() {
   }
 
   const data = (await res.json()) ?? [];
-  console.log("data", data);
 
   const pois = data.map(
     (datum: { id: number; price: number; lat: number; lng: number }) => ({
