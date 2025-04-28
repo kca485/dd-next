@@ -1,3 +1,7 @@
 export default function Page() {
-  return <p>Please check you email.</p>;
+  return (
+    <div className="h-screen flex items-center justify-center">
+      <p>Please check you email.</p>
+    </div>
+  );
 }
