@@ -19,11 +19,13 @@ export default async function Home() {
     `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
     {
       headers: {
+        Accept: "application/json",
         cookie: cookieHeader,
       },
       cache: "no-store",
     },
   );
+  console.log("session response", authRes);
 
   if (!authRes.ok) {
     console.error("Session response is not ok");
