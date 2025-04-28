@@ -1,9 +1,19 @@
 import { redirect } from "next/navigation";
 import { GoogleMap } from "./google-map";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export default async function Home() {
+  const cookieStore = await cookies();
+  const sbAuth = cookieStore.get("sb-auth");
+  console.log("sb auth", sbAuth);
+  if (!sbAuth) {
+    console.error("no auth info found");
+  }
+
   const cookieHeader = (await headers()).get("cookie") ?? "";
+  if (!cookieHeader) {
+    console.error("no cookie found");
+  }
 
   const authRes = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
