@@ -18,20 +18,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { addPlace, deletePlace, editPlace } from "./actions";
-import { FormButton } from "@/components/ui/form-button";
 
-interface Poi {
+export interface Poi {
   id: number;
   location: google.maps.LatLngLiteral;
   price: number;
   picturePath: string;
 }
 
-export function GoogleMap({ places }: { places: Poi[] }) {
+interface MapProps {
+  places: Poi[];
+  onEditPlace(formdata: FormData, id: number): Promise<void>;
+  onAddPlace(formdata: FormData): Promise<void>;
+  onDeletePlace(id: number): Promise<void>;
+}
+export function MapWidget({
+  places,
+  onEditPlace,
+  onAddPlace,
+  onDeletePlace,
+}: MapProps) {
   const pois = places;
   const [selectedMarker, setSelectedMarker] =
     useState<google.maps.LatLngLiteral | null>(null);
@@ -63,10 +70,10 @@ export function GoogleMap({ places }: { places: Poi[] }) {
       if (!selectedPoi?.id) {
         return console.error("No id to update");
       }
-      editPlace(formData, selectedPoi.id);
+      onEditPlace(formData, selectedPoi.id);
       setSelectedMarker(null);
     } else {
-      addPlace(formData);
+      onAddPlace(formData);
       setNewPosition(null);
     }
   }
@@ -83,7 +90,7 @@ export function GoogleMap({ places }: { places: Poi[] }) {
     if (!selectedPoi?.id) {
       return console.error("No id to delete");
     }
-    deletePlace(selectedPoi.id);
+    onDeletePlace(selectedPoi.id);
   }
 
   return (
@@ -123,50 +130,6 @@ export function GoogleMap({ places }: { places: Poi[] }) {
         )}
       </div>
     </div>
-  );
-}
-
-function PlaceForm({
-  latLng,
-  onSubmit,
-  pois,
-}: {
-  latLng: google.maps.LatLngLiteral;
-  onSubmit: (formData: FormData) => void;
-  pois: Poi[];
-}) {
-  const selectedPoi = pois.find(
-    (poi) => poi.location.lat === latLng.lat && poi.location.lng === latLng.lng,
-  );
-  const existingPrice = selectedPoi ? selectedPoi.price : 0;
-
-  return (
-    <form className="flex flex-col gap-y-4 flex-grow" action={onSubmit}>
-      <div>
-        <Label htmlFor="lat">Lat:</Label>
-        <Input id="lat" name="lat" value={latLng.lat} readOnly />
-      </div>
-      <div>
-        <Label htmlFor="lng">Lng:</Label>
-        <Input id="lng" name="lng" value={latLng.lng} readOnly />
-      </div>
-      <div>
-        <Label htmlFor="price">Price:</Label>
-        <Input
-          key={String(latLng.lat) + String(latLng.lng)}
-          id="price"
-          name="price"
-          type="number"
-          defaultValue={existingPrice}
-          required
-        />
-      </div>
-      <div>
-        <Label htmlFor="picture">Picture:</Label>
-        <Input id="picture" name="picture" type="file" accept="image/*" />
-      </div>
-      <FormButton>Submit</FormButton>
-    </form>
   );
 }
 

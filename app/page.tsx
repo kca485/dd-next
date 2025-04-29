@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { GoogleMap } from "./google-map";
 import { headers } from "next/headers";
+import { MapWidget } from "@/components/feature/map-widget";
+import { addPlace, deletePlace, editPlace } from "./actions";
 
 export const runtime = "nodejs";
 
@@ -60,11 +61,15 @@ export default async function Home() {
       picturePath: datum.picture_path,
     }),
   );
-  console.log("POIS", pois);
 
   return (
     <>
-      <GoogleMap places={pois} />
+      <MapWidget
+        places={pois}
+        onEditPlace={editPlace}
+        onAddPlace={addPlace}
+        onDeletePlace={deletePlace}
+      />
     </>
   );
 }
