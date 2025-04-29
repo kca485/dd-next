@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { addPlace, deletePlace, editPlace } from "./actions";
+import { FormButton } from "@/components/ui/form-button";
 
 interface Poi {
   id: number;
@@ -164,7 +165,7 @@ function PlaceForm({
         <Label htmlFor="picture">Picture:</Label>
         <Input id="picture" name="picture" type="file" accept="image/*" />
       </div>
-      <Button>Submit</Button>
+      <FormButton>Submit</FormButton>
     </form>
   );
 }

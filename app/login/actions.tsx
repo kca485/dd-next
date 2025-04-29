@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-export async function sendMagicLink(_: void, formData: FormData) {
+export async function sendMagicLink(formData: FormData) {
   const data = {
     email: formData.get("email") as string,
   };

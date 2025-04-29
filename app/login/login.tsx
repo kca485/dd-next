@@ -1,16 +1,12 @@
-"use client";
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { sendMagicLink } from "./actions";
-import { useActionState } from "react";
+import { FormButton } from "@/components/ui/form-button";
 
 export function Login() {
-  const [_, formAction, isPending] = useActionState(sendMagicLink, undefined);
   return (
     <form
-      action={formAction}
+      action={sendMagicLink}
       className="border rounded-xl p-8 flex flex-col gap-y-4"
     >
       <div className="space-y-2">
@@ -18,7 +14,7 @@ export function Login() {
         <Input id="email" name="email" type="email" required />
       </div>
 
-      <Button disabled={isPending}>Log in</Button>
+      <FormButton>Log in</FormButton>
     </form>
   );
 }
