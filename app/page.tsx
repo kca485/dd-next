@@ -30,7 +30,6 @@ export default async function Home() {
     redirect("/login");
   }
 
-  // Get places data
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/api/place`, {
     headers: {
       Accept: "application/json",
@@ -45,15 +44,23 @@ export default async function Home() {
   const data = (await res.json()) ?? [];
 
   const pois = data.map(
-    (datum: { id: number; price: number; lat: number; lng: number }) => ({
+    (datum: {
+      id: number;
+      price: number;
+      lat: number;
+      lng: number;
+      picture_path?: string;
+    }) => ({
       id: datum.id,
       price: datum.price,
       location: {
         lat: datum.lat,
         lng: datum.lng,
       },
+      picturePath: datum.picture_path,
     }),
   );
+  console.log("POIS", pois);
 
   return (
     <>

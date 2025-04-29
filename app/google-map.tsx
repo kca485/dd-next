@@ -4,7 +4,6 @@ import {
   AdvancedMarker,
   APIProvider,
   Map,
-  MapCameraChangedEvent,
   MapMouseEvent,
   Pin,
   useMap,
@@ -28,6 +27,7 @@ interface Poi {
   id: number;
   location: google.maps.LatLngLiteral;
   price: number;
+  picturePath: string;
 }
 
 export function GoogleMap({ places }: { places: Poi[] }) {
@@ -53,12 +53,6 @@ export function GoogleMap({ places }: { places: Poi[] }) {
   }
 
   function handleForm(formData: FormData) {
-    const price = Math.floor(parseFloat(formData.get("price") as string));
-    const place = {
-      lat: parseFloat(formData.get("lat") as string),
-      lng: parseFloat(formData.get("lng") as string),
-      price,
-    };
     if (selectedMarker) {
       const selectedPoi = pois.find(
         (poi) =>
@@ -68,10 +62,10 @@ export function GoogleMap({ places }: { places: Poi[] }) {
       if (!selectedPoi?.id) {
         return console.error("No id to update");
       }
-      editPlace(place, selectedPoi.id);
+      editPlace(formData, selectedPoi.id);
       setSelectedMarker(null);
     } else {
-      addPlace(place);
+      addPlace(formData);
       setNewPosition(null);
     }
   }
@@ -167,8 +161,8 @@ function PlaceForm({
         />
       </div>
       <div>
-        <Label htmlFor="image">Picture:</Label>
-        <Input id="image" type="file" />
+        <Label htmlFor="picture">Picture:</Label>
+        <Input id="picture" name="picture" type="file" accept="image/*" />
       </div>
       <Button>Submit</Button>
     </form>
@@ -219,7 +213,7 @@ function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
 
       onSelect?.(e.latLng.toJSON());
     },
-    [map],
+    [map, onSelect],
   );
 
   return pois.map((poi) => (
@@ -233,7 +227,8 @@ function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
       <Tooltip>
         <TooltipContent>
           <Image
-            src={placeholderImage}
+            loader={poi.picturePath ? ({ src }) => src : undefined}
+            src={poi.picturePath || placeholderImage}
             alt=""
             height={100}
             width={100}
