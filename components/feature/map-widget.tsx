@@ -82,6 +82,7 @@ export function MapWidget({
   function handlePlaceMarker(e: MapMouseEvent) {
     setSelectedMarker(null);
     setNewPosition(e.detail.latLng);
+    setCurrentTab("form");
   }
 
   function handleForm(formData: FormData) {
