@@ -116,31 +116,10 @@ export function MapWidget({
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAP_KEY ?? ""}>
-      <div className="flex">
-        <div className="h-screen flex-grow">
-          <TooltipProvider>
-            <Map
-              defaultZoom={13}
-              defaultCenter={userLocation ? userLocation : DEFAULT_LOCATION}
-              mapId="43ca1adc30ca2b5a"
-              onClick={handlePlaceMarker}
-            >
-              <PoiMarkers onSelect={handleSelectMarker} pois={pois} />
-              {newPosition && (
-                <AdvancedMarker position={newPosition}>
-                  <Pin
-                    background="#FBBC04"
-                    glyphColor="#000"
-                    borderColor="#000"
-                  />
-                </AdvancedMarker>
-              )}
-            </Map>
-          </TooltipProvider>
-        </div>
+      <div className="flex flex-col lg:flex-row">
         <Tabs
           defaultValue="data"
-          className="w-md p-2 max-h-screen overflow-auto"
+          className="w-full lg:w-md p-2 max-h-screen overflow-auto"
         >
           <TabsList className="w-full">
             <TabsTrigger value="data">Data</TabsTrigger>
@@ -175,6 +154,27 @@ export function MapWidget({
             </Card>
           </TabsContent>
         </Tabs>
+        <div className="h-screen flex-grow">
+          <TooltipProvider>
+            <Map
+              defaultZoom={13}
+              defaultCenter={userLocation ? userLocation : DEFAULT_LOCATION}
+              mapId="43ca1adc30ca2b5a"
+              onClick={handlePlaceMarker}
+            >
+              <PoiMarkers onSelect={handleSelectMarker} pois={pois} />
+              {newPosition && (
+                <AdvancedMarker position={newPosition}>
+                  <Pin
+                    background="#FBBC04"
+                    glyphColor="#000"
+                    borderColor="#000"
+                  />
+                </AdvancedMarker>
+              )}
+            </Map>
+          </TooltipProvider>
+        </div>
       </div>
     </APIProvider>
   );
