@@ -59,14 +59,16 @@ export function MapWidget({
 
   const latLng = selectedMarker ?? newPosition;
 
-  if (!userLocation && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setUserLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
+  useEffect(() => {
+    if (!userLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
       });
-    });
-  }
+    }
+  }, [userLocation]);
 
   const handleSelectMarker = useCallback(
     (latLng: google.maps.LatLngLiteral) => {
@@ -239,12 +241,16 @@ function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
       <Tooltip>
         <TooltipContent>
           <Image
-            loader={poi.picturePath ? ({ src }) => src : undefined}
+            loader={
+              poi.picturePath
+                ? ({ src, width }) => `${src}?width=${width}`
+                : undefined
+            }
             src={poi.picturePath || placeholderImage}
             alt=""
             height={100}
             width={100}
-            className="bg-white"
+            className="bg-white w-3xs aspect-3/2 object-cover object-center"
           />
         </TooltipContent>
         <TooltipTrigger>
