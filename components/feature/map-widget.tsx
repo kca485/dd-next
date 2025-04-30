@@ -56,6 +56,7 @@ export function MapWidget({
     useState<google.maps.LatLngLiteral | null>(null);
   const [newPosition, setNewPosition] =
     useState<google.maps.LatLngLiteral | null>(null);
+  const [currentTab, setCurrentTab] = useState("data");
 
   const latLng = selectedMarker ?? newPosition;
 
@@ -116,11 +117,17 @@ export function MapWidget({
     onDeletePlace(selectedPoi.id);
   }
 
+  function handleNameClick(latLng: google.maps.LatLngLiteral) {
+    handleSelectMarker(latLng);
+    setCurrentTab("form");
+  }
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_MAP_KEY ?? ""}>
       <div className="flex flex-col lg:flex-row">
         <Tabs
-          defaultValue="data"
+          value={currentTab}
+          onValueChange={(value) => setCurrentTab(value)}
           className="w-full lg:w-md p-2 max-h-screen overflow-auto"
         >
           <TabsList className="w-full">
@@ -130,7 +137,7 @@ export function MapWidget({
           <TabsContent value="data">
             <Card className="h-full">
               <CardContent>
-                <PlaceTable pois={pois} onNameClick={handleSelectMarker} />
+                <PlaceTable pois={pois} onNameClick={handleNameClick} />
               </CardContent>
               <CardFooter></CardFooter>
             </Card>
