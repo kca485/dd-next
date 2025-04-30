@@ -47,12 +47,14 @@ export default async function Home() {
   const pois = data.map(
     (datum: {
       id: number;
+      name: string;
       price: number;
       lat: number;
       lng: number;
       picture_path?: string;
     }) => ({
       id: datum.id,
+      name: datum.name,
       price: datum.price,
       location: {
         lat: datum.lat,

@@ -19,9 +19,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { PlaceForm } from "./place-form";
+import { PlaceTable } from "./place-table";
+import { formatPrice } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Card, CardContent, CardFooter } from "../ui/card";
 
 export interface Poi {
   id: number;
+  name: string;
   location: google.maps.LatLngLiteral;
   price: number;
   picturePath: string;
@@ -94,10 +100,10 @@ export function MapWidget({
   }
 
   return (
-    <div className="flex">
-      <div className="h-screen flex-grow">
-        <TooltipProvider>
-          <APIProvider apiKey="AIzaSyCznevvPmQwRnUjam5bcXrwZWHNsHOV4iY">
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_MAP_KEY ?? ""}>
+      <div className="flex">
+        <div className="h-screen flex-grow">
+          <TooltipProvider>
             <Map
               defaultZoom={13}
               defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
@@ -115,26 +121,53 @@ export function MapWidget({
                 </AdvancedMarker>
               )}
             </Map>
-          </APIProvider>
-        </TooltipProvider>
+          </TooltipProvider>
+        </div>
+        <Tabs
+          defaultValue="data"
+          className="w-md p-2 max-h-screen overflow-auto"
+        >
+          <TabsList className="w-full">
+            <TabsTrigger value="data">Data</TabsTrigger>
+            <TabsTrigger value="form">Form</TabsTrigger>
+          </TabsList>
+          <TabsContent value="data">
+            <Card className="h-full">
+              <CardContent>
+                <PlaceTable pois={pois} onNameClick={handleSelectMarker} />
+              </CardContent>
+              <CardFooter></CardFooter>
+            </Card>
+          </TabsContent>
+          <TabsContent value="form">
+            <Card className="h-full">
+              <CardContent>
+                {latLng && (
+                  <PlaceForm
+                    latLng={latLng}
+                    onSubmit={handleForm}
+                    pois={pois}
+                  />
+                )}
+              </CardContent>
+              {selectedMarker && (
+                <CardFooter>
+                  <form action={handleDelete} className="mt-auto">
+                    <Button variant="destructive">Delete</Button>
+                  </form>
+                </CardFooter>
+              )}
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-      <div className="w-xs p-4 flex flex-col">
-        <h1 className="font-bold text-lg pb-4">Data</h1>
-        {latLng && (
-          <PlaceForm latLng={latLng} onSubmit={handleForm} pois={pois} />
-        )}
-        {selectedMarker && (
-          <form action={handleDelete}>
-            <Button variant="destructive">Delete</Button>
-          </form>
-        )}
-      </div>
-    </div>
+    </APIProvider>
   );
 }
 
 interface PoiMarkersProps {
   onSelect: (latLng: google.maps.LatLngLiteral) => void;
+  onSyncLocation?: (latLng: google.maps.LatLngLiteral) => void;
   pois: Poi[];
 }
 function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
@@ -207,11 +240,4 @@ function PoiMarkers({ onSelect, pois }: PoiMarkersProps) {
       </Tooltip>
     </AdvancedMarker>
   ));
-}
-
-function formatPrice(number: number) {
-  return new Intl.NumberFormat("id-ID", {
-    currency: "IDR",
-    style: "currency",
-  }).format(number);
 }

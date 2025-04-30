@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Poi } from "./map-widget";
 
-function PlaceForm({
+export function PlaceForm({
   latLng,
   onSubmit,
   pois,
@@ -15,7 +15,8 @@ function PlaceForm({
   const selectedPoi = pois.find(
     (poi) => poi.location.lat === latLng.lat && poi.location.lng === latLng.lng,
   );
-  const existingPrice = selectedPoi ? selectedPoi.price : 0;
+  const price = selectedPoi ? selectedPoi.price : 0;
+  const name = selectedPoi ? selectedPoi.name : "";
 
   return (
     <form className="flex flex-col gap-y-4 flex-grow" action={onSubmit}>
@@ -28,13 +29,17 @@ function PlaceForm({
         <Input id="lng" name="lng" value={latLng.lng} readOnly />
       </div>
       <div>
+        <Label htmlFor="name">Name:</Label>
+        <Input key={name} id="name" name="name" defaultValue={name} required />
+      </div>
+      <div>
         <Label htmlFor="price">Price:</Label>
         <Input
           key={String(latLng.lat) + String(latLng.lng)}
           id="price"
           name="price"
           type="number"
-          defaultValue={existingPrice}
+          defaultValue={price}
           required
         />
       </div>
@@ -42,7 +47,7 @@ function PlaceForm({
         <Label htmlFor="picture">Picture:</Label>
         <Input id="picture" name="picture" type="file" accept="image/*" />
       </div>
-      <FormButton()>Submit</FormButton>
+      <FormButton>Submit</FormButton>
     </form>
   );
 }
