@@ -25,6 +25,11 @@ import { formatPrice } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
+const DEFAULT_LOCATION = {
+  lat: -7.797929,
+  lng: 110.371556,
+};
+
 export interface Poi {
   id: number;
   name: string;
@@ -46,12 +51,22 @@ export function MapWidget({
   onDeletePlace,
 }: MapProps) {
   const pois = places;
+  const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral>();
   const [selectedMarker, setSelectedMarker] =
     useState<google.maps.LatLngLiteral | null>(null);
   const [newPosition, setNewPosition] =
     useState<google.maps.LatLngLiteral | null>(null);
 
   const latLng = selectedMarker ?? newPosition;
+
+  if (!userLocation && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setUserLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+  }
 
   const handleSelectMarker = useCallback(
     (latLng: google.maps.LatLngLiteral) => {
@@ -106,7 +121,7 @@ export function MapWidget({
           <TooltipProvider>
             <Map
               defaultZoom={13}
-              defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
+              defaultCenter={userLocation ? userLocation : DEFAULT_LOCATION}
               mapId="43ca1adc30ca2b5a"
               onClick={handlePlaceMarker}
             >
